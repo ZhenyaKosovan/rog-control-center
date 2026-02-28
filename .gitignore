@@ -1,0 +1,25 @@
+# Rust build artifacts
+/target/
+
+# Logs
+*.log
+
+# Environment and local overrides
+.env
+.env.*
+!.env.example
+.direnv/
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Local tool settings
+.claude/settings.local.json
