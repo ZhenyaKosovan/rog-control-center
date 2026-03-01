@@ -2,7 +2,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, Paragraph},
+    widgets::{Block, Borders, Paragraph},
     Frame,
 };
 
@@ -29,7 +29,7 @@ fn draw_profile_selector(f: &mut Frame, app: &App, area: Rect) {
     let focused = app.perf_selected == 0;
     let block = Block::default()
         .title(" Profile ")
-        .title_style(if focused { theme::header() } else { Style::default().fg(theme::MUTED) })
+        .title_style(if focused { theme::header() } else { Style::default().fg(theme::muted()) })
         .borders(Borders::ALL)
         .border_style(if focused { theme::border_focused() } else { theme::border() });
 
@@ -50,7 +50,7 @@ fn draw_profile_selector(f: &mut Frame, app: &App, area: Rect) {
             let style = if is_active {
                 Style::default().fg(color).add_modifier(Modifier::BOLD)
             } else {
-                Style::default().fg(theme::FG)
+                Style::default().fg(theme::fg())
             };
 
             Line::from(vec![
@@ -81,7 +81,7 @@ fn draw_ppt_slider(
     let focused = app.perf_selected == idx;
     let block = Block::default()
         .title(format!(" {title} "))
-        .title_style(if focused { theme::header() } else { Style::default().fg(theme::MUTED) })
+        .title_style(if focused { theme::header() } else { Style::default().fg(theme::muted()) })
         .borders(Borders::ALL)
         .border_style(if focused { theme::border_focused() } else { theme::border() });
 
@@ -90,20 +90,37 @@ fn draw_ppt_slider(
 
     let ratio = (value - min) as f64 / (max - min) as f64;
     let color = if ratio > 0.8 {
-        theme::RED
+        theme::red()
     } else if ratio > 0.5 {
-        theme::YELLOW
+        theme::yellow()
     } else {
-        theme::GREEN
+        theme::green()
     };
 
-    let gauge = Gauge::default()
-        .gauge_style(Style::default().fg(color).bg(theme::SURFACE))
-        .ratio(ratio.clamp(0.0, 1.0))
-        .label(Span::styled(
-            format!("{value}W  ({min}-{max}W)"),
-            Style::default().fg(theme::FG).add_modifier(Modifier::BOLD),
-        ));
+    let rows = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(1), Constraint::Length(1)])
+        .split(inner);
 
-    f.render_widget(gauge, inner);
+    let info_line = Line::from(vec![
+        Span::styled(
+            format!(" {value}W"),
+            Style::default().fg(color).add_modifier(Modifier::BOLD),
+        ),
+        Span::styled(format!("  ({min}-{max}W)  ←→ adjust"), Style::default().fg(theme::muted())),
+    ]);
+    f.render_widget(Paragraph::new(info_line), rows[0]);
+
+    let track_width = rows[1].width.saturating_sub(2) as usize;
+    let marker_pos = ((ratio * track_width as f64) as usize).min(track_width.saturating_sub(1));
+    let before = "─".repeat(marker_pos);
+    let after = "─".repeat(track_width.saturating_sub(marker_pos + 1));
+
+    let track_line = Line::from(vec![
+        Span::raw(" "),
+        Span::styled(before, Style::default().fg(color)),
+        Span::styled("●", Style::default().fg(color).add_modifier(Modifier::BOLD)),
+        Span::styled(after, Style::default().fg(theme::surface())),
+    ]);
+    f.render_widget(Paragraph::new(track_line), rows[1]);
 }

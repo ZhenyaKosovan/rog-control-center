@@ -16,26 +16,28 @@ struct GpuMode {
     color: ratatui::style::Color,
 }
 
-const GPU_MODES: [GpuMode; 3] = [
-    GpuMode {
-        name: "Integrated",
-        icon: "󰢮",
-        desc: "iGPU only. Best battery life. dGPU is powered off.",
-        color: theme::GREEN,
-    },
-    GpuMode {
-        name: "Hybrid",
-        icon: "󰍹",
-        desc: "Auto-switch between iGPU and dGPU. Balanced performance.",
-        color: theme::BLUE,
-    },
-    GpuMode {
-        name: "AsusMuxDgpu",
-        icon: "󰍺",
-        desc: "dGPU direct via MUX switch. Max performance. REQUIRES REBOOT.",
-        color: theme::RED,
-    },
-];
+fn gpu_modes() -> [GpuMode; 3] {
+    [
+        GpuMode {
+            name: "Integrated",
+            icon: "󰢮",
+            desc: "iGPU only. Best battery life. dGPU is powered off.",
+            color: theme::green(),
+        },
+        GpuMode {
+            name: "Hybrid",
+            icon: "󰍹",
+            desc: "Auto-switch between iGPU and dGPU. Balanced performance.",
+            color: theme::blue(),
+        },
+        GpuMode {
+            name: "AsusMuxDgpu",
+            icon: "󰍺",
+            desc: "dGPU direct via MUX switch. Max performance. REQUIRES REBOOT.",
+            color: theme::red(),
+        },
+    ]
+}
 
 pub fn draw(f: &mut Frame, app: &App, area: Rect) {
     let chunks = Layout::default()
@@ -48,7 +50,7 @@ pub fn draw(f: &mut Frame, app: &App, area: Rect) {
         ])
         .split(area);
 
-    for (i, mode) in GPU_MODES.iter().enumerate() {
+    for (i, mode) in gpu_modes().iter().enumerate() {
         draw_gpu_card(f, app, chunks[i], mode, i);
     }
 
@@ -76,7 +78,7 @@ fn draw_gpu_card(f: &mut Frame, app: &App, area: Rect, mode: &GpuMode, idx: usiz
                 .fg(if is_active || is_selected {
                     mode.color
                 } else {
-                    theme::MUTED
+                    theme::muted()
                 })
                 .add_modifier(Modifier::BOLD),
         )
@@ -90,7 +92,7 @@ fn draw_gpu_card(f: &mut Frame, app: &App, area: Rect, mode: &GpuMode, idx: usiz
     let status_style = if is_active {
         Style::default().fg(mode.color).add_modifier(Modifier::BOLD)
     } else {
-        Style::default().fg(theme::MUTED)
+        Style::default().fg(theme::muted())
     };
 
     let lines = vec![
@@ -99,12 +101,12 @@ fn draw_gpu_card(f: &mut Frame, app: &App, area: Rect, mode: &GpuMode, idx: usiz
         ]),
         Line::from(vec![
             Span::styled("  ", Style::default()),
-            Span::styled(mode.desc, Style::default().fg(theme::MUTED)),
+            Span::styled(mode.desc, Style::default().fg(theme::muted())),
         ]),
         if is_selected && !is_active {
             Line::from(Span::styled(
                 "  Press Enter to switch",
-                Style::default().fg(theme::TEAL),
+                Style::default().fg(theme::teal()),
             ))
         } else {
             Line::from("")
@@ -127,26 +129,26 @@ fn draw_confirm_dialog(f: &mut Frame, app: &App) {
         Line::from(""),
         Line::from(Span::styled(
             "  ⚠ GPU Mode Change",
-            Style::default().fg(theme::YELLOW).add_modifier(Modifier::BOLD),
+            Style::default().fg(theme::yellow()).add_modifier(Modifier::BOLD),
         )),
         Line::from(""),
         Line::from(Span::styled(
             format!("  Switch to {target}?"),
-            Style::default().fg(theme::FG),
+            Style::default().fg(theme::fg()),
         )),
         if is_mux {
             Line::from(Span::styled(
                 "  MUX switch requires a REBOOT to take effect!",
-                Style::default().fg(theme::RED).add_modifier(Modifier::BOLD),
+                Style::default().fg(theme::red()).add_modifier(Modifier::BOLD),
             ))
         } else {
             Line::from("")
         },
         Line::from(""),
         Line::from(vec![
-            Span::styled("  [Y]", Style::default().fg(theme::GREEN).add_modifier(Modifier::BOLD)),
+            Span::styled("  [Y]", Style::default().fg(theme::green()).add_modifier(Modifier::BOLD)),
             Span::raw(" Confirm    "),
-            Span::styled("[N/Esc]", Style::default().fg(theme::RED).add_modifier(Modifier::BOLD)),
+            Span::styled("[N/Esc]", Style::default().fg(theme::red()).add_modifier(Modifier::BOLD)),
             Span::raw(" Cancel"),
         ]),
     ];

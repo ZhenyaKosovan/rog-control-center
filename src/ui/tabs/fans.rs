@@ -52,16 +52,16 @@ fn draw_fan_chart(f: &mut Frame, app: &App, area: Rect) {
         Some(c) => c,
         None => {
             let msg = Paragraph::new("  No fan curve data available")
-                .style(Style::default().fg(theme::MUTED));
+                .style(Style::default().fg(theme::muted()));
             f.render_widget(msg, area);
             return;
         }
     };
 
     let fan_color = if app.fan_selected_fan == 0 {
-        theme::SKY
+        theme::sky()
     } else {
-        theme::MAUVE
+        theme::mauve()
     };
 
     // Build data points (temp, pwm%)
@@ -84,21 +84,21 @@ fn draw_fan_chart(f: &mut Frame, app: &App, area: Rect) {
         .graph_type(GraphType::Scatter)
         .style(
             if app.fan_editing {
-                Style::default().fg(theme::YELLOW).add_modifier(Modifier::BOLD)
+                Style::default().fg(theme::yellow()).add_modifier(Modifier::BOLD)
             } else {
-                Style::default().fg(theme::PEACH)
+                Style::default().fg(theme::peach())
             },
         )
         .data(&selected_point);
 
     let x_labels = ["20", "40", "60", "80", "100"]
         .iter()
-        .map(|s| Span::styled(*s, Style::default().fg(theme::MUTED)))
+        .map(|s| Span::styled(*s, Style::default().fg(theme::muted())))
         .collect::<Vec<_>>();
 
     let y_labels = ["0%", "25%", "50%", "75%", "100%"]
         .iter()
-        .map(|s| Span::styled(*s, Style::default().fg(theme::MUTED)))
+        .map(|s| Span::styled(*s, Style::default().fg(theme::muted())))
         .collect::<Vec<_>>();
 
     let chart = Chart::new(vec![dataset, highlight])
@@ -111,13 +111,13 @@ fn draw_fan_chart(f: &mut Frame, app: &App, area: Rect) {
         )
         .x_axis(
             Axis::default()
-                .title(Span::styled("Temp (°C)", Style::default().fg(theme::MUTED)))
+                .title(Span::styled("Temp (°C)", Style::default().fg(theme::muted())))
                 .bounds([20.0, 100.0])
                 .labels(x_labels),
         )
         .y_axis(
             Axis::default()
-                .title(Span::styled("Fan %", Style::default().fg(theme::MUTED)))
+                .title(Span::styled("Fan %", Style::default().fg(theme::muted())))
                 .bounds([0.0, 100.0])
                 .labels(y_labels),
         );
@@ -136,12 +136,12 @@ fn draw_point_info(f: &mut Frame, app: &App, area: Rect) {
     let editing_hint = if app.fan_editing {
         Span::styled(
             "  [EDITING: ↑↓ PWM, ←→ Temp, Enter: Apply, Esc: Cancel]",
-            Style::default().fg(theme::YELLOW),
+            Style::default().fg(theme::yellow()),
         )
     } else {
         Span::styled(
             "  [Press e to edit, d for defaults]",
-            Style::default().fg(theme::MUTED),
+            Style::default().fg(theme::muted()),
         )
     };
 
@@ -149,7 +149,7 @@ fn draw_point_info(f: &mut Frame, app: &App, area: Rect) {
         Line::from(vec![
             Span::styled(
                 format!("  Point {}: ", i + 1),
-                Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD),
+                Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD),
             ),
             Span::styled(format!("{}°C", curve.temp[i]), theme::value()),
             Span::styled(" @ ", theme::label()),
@@ -162,9 +162,9 @@ fn draw_point_info(f: &mut Frame, app: &App, area: Rect) {
             (0..8)
                 .flat_map(|j| {
                     let style = if j == i {
-                        Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD)
+                        Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD)
                     } else {
-                        Style::default().fg(theme::MUTED)
+                        Style::default().fg(theme::muted())
                     };
                     vec![
                         Span::styled(

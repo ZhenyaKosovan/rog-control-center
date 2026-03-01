@@ -29,6 +29,9 @@ async fn main() -> color_eyre::Result<()> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
+    // Theme init (loads omarchy theme or falls back to defaults)
+    ui::theme::init();
+
     // App init
     let mut app = App::new();
     let hwmon = HwmonPaths::discover();

@@ -2,7 +2,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, Paragraph},
+    widgets::{Block, Borders, Paragraph},
     Frame,
 };
 
@@ -13,7 +13,7 @@ pub fn draw(f: &mut Frame, app: &App, area: Rect) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            Constraint::Length(5),  // charge limit
+            Constraint::Length(4),  // charge limit
             Constraint::Length(3),  // one-shot
             Constraint::Length(3),  // boot sound
             Constraint::Length(3),  // panel OD
@@ -33,7 +33,7 @@ fn draw_charge_limit(f: &mut Frame, app: &App, area: Rect) {
     let focused = app.bat_selected == 0;
     let block = Block::default()
         .title(" Charge Limit ")
-        .title_style(if focused { theme::header() } else { Style::default().fg(theme::MUTED) })
+        .title_style(if focused { theme::header() } else { Style::default().fg(theme::muted()) })
         .borders(Borders::ALL)
         .border_style(if focused { theme::border_focused() } else { theme::border() });
 
@@ -43,35 +43,39 @@ fn draw_charge_limit(f: &mut Frame, app: &App, area: Rect) {
     let limit = app.state.charge_limit;
     let ratio = (limit as f64 - 20.0) / 80.0;
     let color = if limit >= 80 {
-        theme::GREEN
+        theme::green()
     } else if limit >= 50 {
-        theme::YELLOW
+        theme::yellow()
     } else {
-        theme::RED
+        theme::red()
     };
 
-    let gauge_area = Layout::default()
+    let rows = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Length(1), Constraint::Length(1), Constraint::Min(0)])
+        .constraints([Constraint::Length(1), Constraint::Length(1)])
         .split(inner);
 
     let info = Line::from(vec![
-        Span::styled("  ←→ to adjust  ", Style::default().fg(theme::MUTED)),
         Span::styled(
-            format!("Current: {limit}%"),
+            format!(" {limit}%"),
             Style::default().fg(color).add_modifier(Modifier::BOLD),
         ),
+        Span::styled("  (20-100%)  ←→ adjust", Style::default().fg(theme::muted())),
     ]);
-    f.render_widget(Paragraph::new(info), gauge_area[0]);
+    f.render_widget(Paragraph::new(info), rows[0]);
 
-    let gauge = Gauge::default()
-        .gauge_style(Style::default().fg(color).bg(theme::SURFACE))
-        .ratio(ratio.clamp(0.0, 1.0))
-        .label(Span::styled(
-            format!("{limit}%  (20-100%)"),
-            Style::default().fg(theme::FG).add_modifier(Modifier::BOLD),
-        ));
-    f.render_widget(gauge, gauge_area[1]);
+    let track_width = rows[1].width.saturating_sub(2) as usize;
+    let marker_pos = ((ratio * track_width as f64) as usize).min(track_width.saturating_sub(1));
+    let before = "─".repeat(marker_pos);
+    let after = "─".repeat(track_width.saturating_sub(marker_pos + 1));
+
+    let track_line = Line::from(vec![
+        Span::raw(" "),
+        Span::styled(before, Style::default().fg(color)),
+        Span::styled("●", Style::default().fg(color).add_modifier(Modifier::BOLD)),
+        Span::styled(after, Style::default().fg(theme::surface())),
+    ]);
+    f.render_widget(Paragraph::new(track_line), rows[1]);
 }
 
 fn draw_oneshot(f: &mut Frame, app: &App, area: Rect) {
@@ -85,14 +89,14 @@ fn draw_oneshot(f: &mut Frame, app: &App, area: Rect) {
 
     let line = Line::from(vec![
         if focused {
-            Span::styled(" ▸ ", Style::default().fg(theme::TEAL))
+            Span::styled(" ▸ ", Style::default().fg(theme::teal()))
         } else {
             Span::styled("   ", Style::default())
         },
-        Span::styled("󰂄 One-Shot Full Charge", Style::default().fg(theme::FG)),
+        Span::styled("󰂄 One-Shot Full Charge", Style::default().fg(theme::fg())),
         Span::styled(
             "  (charges to 100% once, then reverts to limit)",
-            Style::default().fg(theme::MUTED),
+            Style::default().fg(theme::muted()),
         ),
     ]);
 
@@ -109,22 +113,22 @@ fn draw_toggle(f: &mut Frame, app: &App, area: Rect, label: &str, enabled: bool,
     f.render_widget(block, area);
 
     let toggle_icon = if enabled { "◉ On " } else { "○ Off" };
-    let toggle_color = if enabled { theme::GREEN } else { theme::MUTED };
+    let toggle_color = if enabled { theme::green() } else { theme::muted() };
 
     let line = Line::from(vec![
         if focused {
-            Span::styled(" ▸ ", Style::default().fg(theme::TEAL))
+            Span::styled(" ▸ ", Style::default().fg(theme::teal()))
         } else {
             Span::styled("   ", Style::default())
         },
-        Span::styled(format!("{label}: "), Style::default().fg(theme::FG)),
+        Span::styled(format!("{label}: "), Style::default().fg(theme::fg())),
         Span::styled(
             toggle_icon,
             Style::default().fg(toggle_color).add_modifier(Modifier::BOLD),
         ),
         Span::styled(
             "  (Enter to toggle)",
-            Style::default().fg(theme::MUTED),
+            Style::default().fg(theme::muted()),
         ),
     ]);
 
@@ -142,18 +146,18 @@ fn draw_kb_brightness(f: &mut Frame, app: &App, area: Rect) {
 
     let line = Line::from(vec![
         if focused {
-            Span::styled(" ▸ ", Style::default().fg(theme::TEAL))
+            Span::styled(" ▸ ", Style::default().fg(theme::teal()))
         } else {
             Span::styled("   ", Style::default())
         },
-        Span::styled("󰥻 Keyboard Brightness: ", Style::default().fg(theme::FG)),
+        Span::styled("󰥻 Keyboard Brightness: ", Style::default().fg(theme::fg())),
         Span::styled(
             &app.state.keyboard_brightness,
-            Style::default().fg(theme::MAUVE).add_modifier(Modifier::BOLD),
+            Style::default().fg(theme::mauve()).add_modifier(Modifier::BOLD),
         ),
         Span::styled(
             "  (Enter to cycle)",
-            Style::default().fg(theme::MUTED),
+            Style::default().fg(theme::muted()),
         ),
     ]);
 

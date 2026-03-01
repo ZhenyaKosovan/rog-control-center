@@ -37,7 +37,7 @@ pub fn draw(f: &mut Frame, app: &App, area: Rect) {
 fn draw_effect_list(f: &mut Frame, app: &App, area: Rect) {
     let block = Block::default()
         .title(" Effects ")
-        .title_style(Style::default().fg(theme::MAUVE).add_modifier(Modifier::BOLD))
+        .title_style(Style::default().fg(theme::mauve()).add_modifier(Modifier::BOLD))
         .borders(Borders::ALL)
         .border_style(theme::border_focused());
 
@@ -48,7 +48,7 @@ fn draw_effect_list(f: &mut Frame, app: &App, area: Rect) {
             let style = if i == app.aura_selected {
                 theme::selected()
             } else {
-                Style::default().fg(theme::FG)
+                Style::default().fg(theme::fg())
             };
 
             let marker = if i == app.aura_selected { "▸" } else { " " };
@@ -61,7 +61,7 @@ fn draw_effect_list(f: &mut Frame, app: &App, area: Rect) {
                     if i == app.aura_selected {
                         style
                     } else {
-                        Style::default().fg(theme::MUTED)
+                        Style::default().fg(theme::muted())
                     },
                 ),
             ]))
@@ -75,7 +75,7 @@ fn draw_effect_list(f: &mut Frame, app: &App, area: Rect) {
 fn draw_color_panel(f: &mut Frame, app: &App, area: Rect) {
     let block = Block::default()
         .title(" Settings ")
-        .title_style(Style::default().fg(theme::PINK).add_modifier(Modifier::BOLD))
+        .title_style(Style::default().fg(theme::pink()).add_modifier(Modifier::BOLD))
         .borders(Borders::ALL)
         .border_style(theme::border());
 
@@ -89,9 +89,9 @@ fn draw_color_panel(f: &mut Frame, app: &App, area: Rect) {
     };
 
     let color_style = if app.aura_editing_color {
-        Style::default().fg(theme::YELLOW).add_modifier(Modifier::BOLD)
+        Style::default().fg(theme::yellow()).add_modifier(Modifier::BOLD)
     } else {
-        Style::default().fg(theme::MUTED)
+        Style::default().fg(theme::muted())
     };
 
     // Preview color swatch if we have a valid color
@@ -111,7 +111,7 @@ fn draw_color_panel(f: &mut Frame, app: &App, area: Rect) {
 
     let mut lines = vec![
         Line::from(""),
-        Line::from(Span::styled("  Color", Style::default().fg(theme::FG).add_modifier(Modifier::BOLD))),
+        Line::from(Span::styled("  Color", Style::default().fg(theme::fg()).add_modifier(Modifier::BOLD))),
         Line::from(vec![
             Span::styled("  ", Style::default()),
             Span::styled(color_display, color_style),
@@ -127,21 +127,21 @@ fn draw_color_panel(f: &mut Frame, app: &App, area: Rect) {
 
     lines.extend(vec![
         Line::from(""),
-        Line::from(Span::styled("  Shortcuts", Style::default().fg(theme::FG).add_modifier(Modifier::BOLD))),
+        Line::from(Span::styled("  Shortcuts", Style::default().fg(theme::fg()).add_modifier(Modifier::BOLD))),
         Line::from(vec![
-            Span::styled("  ↑↓      ", Style::default().fg(theme::TEAL)),
+            Span::styled("  ↑↓      ", Style::default().fg(theme::teal())),
             Span::raw("Select effect"),
         ]),
         Line::from(vec![
-            Span::styled("  Enter   ", Style::default().fg(theme::TEAL)),
+            Span::styled("  Enter   ", Style::default().fg(theme::teal())),
             Span::raw("Apply effect"),
         ]),
         Line::from(vec![
-            Span::styled("  c       ", Style::default().fg(theme::TEAL)),
+            Span::styled("  c       ", Style::default().fg(theme::teal())),
             Span::raw("Enter hex color"),
         ]),
         Line::from(vec![
-            Span::styled("  Esc     ", Style::default().fg(theme::TEAL)),
+            Span::styled("  Esc     ", Style::default().fg(theme::teal())),
             Span::raw("Cancel input"),
         ]),
     ]);

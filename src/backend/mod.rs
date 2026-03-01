@@ -18,6 +18,10 @@ pub struct SystemState {
     pub cpu_fan_history: Vec<u64>,
     pub gpu_fan_history: Vec<u64>,
 
+    // Temperature history for sparklines
+    pub cpu_temp_history: Vec<u64>,
+    pub gpu_temp_history: Vec<u64>,
+
     // Profile & power (refreshed every 10s or on-demand)
     pub profile: String,
     pub ppt_apu: u32,
@@ -50,9 +54,17 @@ impl SystemState {
         let data = sysfs::read_sensors(hwmon);
         if let Some(t) = data.cpu_temp {
             self.cpu_temp = t;
+            self.cpu_temp_history.push(t as u64);
+            if self.cpu_temp_history.len() > 60 {
+                self.cpu_temp_history.remove(0);
+            }
         }
         if let Some(t) = data.gpu_temp {
             self.gpu_temp = t;
+            self.gpu_temp_history.push(t as u64);
+            if self.gpu_temp_history.len() > 60 {
+                self.gpu_temp_history.remove(0);
+            }
         }
         if let Some(rpm) = data.cpu_fan {
             self.cpu_fan_rpm = rpm;

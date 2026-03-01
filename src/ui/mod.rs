@@ -39,12 +39,12 @@ fn draw_header(f: &mut Frame, app: &App, area: Rect) {
 
     let header = Line::from(vec![
         Span::styled(" ROG Control Center ", theme::header()),
-        Span::styled("─── ", Style::default().fg(theme::BORDER)),
-        Span::styled(&app.state.board_name, Style::default().fg(theme::MUTED)),
-        Span::styled(" ── ", Style::default().fg(theme::BORDER)),
-        Span::styled(cpu_temp, Style::default().fg(theme::PEACH)),
+        Span::styled("─── ", Style::default().fg(theme::border_color())),
+        Span::styled(&app.state.board_name, Style::default().fg(theme::muted())),
+        Span::styled(" ── ", Style::default().fg(theme::border_color())),
+        Span::styled(cpu_temp, Style::default().fg(theme::peach())),
         Span::raw(" "),
-        Span::styled(gpu_temp, Style::default().fg(theme::PEACH)),
+        Span::styled(gpu_temp, Style::default().fg(theme::peach())),
         Span::raw(" "),
     ]);
 
@@ -70,7 +70,7 @@ fn draw_tabs(f: &mut Frame, app: &App, area: Rect) {
         .select(idx)
         .style(theme::base())
         .highlight_style(theme::tab_active())
-        .divider(Span::styled("│", Style::default().fg(theme::BORDER)));
+        .divider(Span::styled("│", Style::default().fg(theme::border_color())));
 
     f.render_widget(tabs, area);
 }
@@ -98,7 +98,7 @@ fn draw_footer(f: &mut Frame, app: &App, area: Rect) {
     let footer_text = if let Some(ref msg) = app.status_msg {
         Line::from(vec![
             Span::styled(" ", theme::footer()),
-            Span::styled(msg.as_str(), Style::default().fg(theme::GREEN)),
+            Span::styled(msg.as_str(), Style::default().fg(theme::green())),
         ])
     } else {
         let keys = match app.tab {
@@ -126,45 +126,45 @@ fn draw_help_overlay(f: &mut Frame) {
         )),
         Line::from(""),
         Line::from(vec![
-            Span::styled("  q / Ctrl+C  ", Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD)),
+            Span::styled("  q / Ctrl+C  ", Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD)),
             Span::raw("Quit"),
         ]),
         Line::from(vec![
-            Span::styled("  Tab         ", Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD)),
+            Span::styled("  Tab         ", Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD)),
             Span::raw("Next tab"),
         ]),
         Line::from(vec![
-            Span::styled("  Shift+Tab   ", Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD)),
+            Span::styled("  Shift+Tab   ", Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD)),
             Span::raw("Previous tab"),
         ]),
         Line::from(vec![
-            Span::styled("  1-6         ", Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD)),
+            Span::styled("  1-6         ", Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD)),
             Span::raw("Jump to tab"),
         ]),
         Line::from(vec![
-            Span::styled("  ↑↓ / jk     ", Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD)),
+            Span::styled("  ↑↓ / jk     ", Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD)),
             Span::raw("Navigate items"),
         ]),
         Line::from(vec![
-            Span::styled("  ←→ / hl     ", Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD)),
+            Span::styled("  ←→ / hl     ", Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD)),
             Span::raw("Adjust values"),
         ]),
         Line::from(vec![
-            Span::styled("  Enter       ", Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD)),
+            Span::styled("  Enter       ", Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD)),
             Span::raw("Apply / Select"),
         ]),
         Line::from(vec![
-            Span::styled("  Esc         ", Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD)),
+            Span::styled("  Esc         ", Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD)),
             Span::raw("Cancel / Back"),
         ]),
         Line::from(vec![
-            Span::styled("  ?           ", Style::default().fg(theme::TEAL).add_modifier(Modifier::BOLD)),
+            Span::styled("  ?           ", Style::default().fg(theme::teal()).add_modifier(Modifier::BOLD)),
             Span::raw("Toggle this help"),
         ]),
         Line::from(""),
         Line::from(Span::styled(
             " Press any key to close ",
-            Style::default().fg(theme::MUTED),
+            Style::default().fg(theme::muted()),
         )),
     ];
 

@@ -18,7 +18,7 @@ Six tabs covering all major hardware controls:
 - Sensors (CPU/GPU temp, fan RPM, battery) refresh every 2 seconds via sysfs
 - CLI state (profiles, armoury attributes, GPU mode) refreshes every 10 seconds
 - Vim-style navigation (`hjkl`) alongside arrow keys
-- Tokyo Night base palette with Catppuccin Mocha accents
+- Automatic [omarchy](https://github.com/nicholasgasior/omarchy) theme integration, with Tokyo Night + Catppuccin Mocha fallback
 
 ## Requirements
 
@@ -54,6 +54,14 @@ rog-control-center
 | `?` | Toggle help overlay |
 
 Tab-specific keys are shown in the footer bar.
+
+## Theming
+
+The app automatically reads the active [omarchy](https://github.com/nicholasgasior/omarchy) theme from `~/.config/omarchy/current/theme/colors.toml`. All 17 built-in omarchy themes are supported, including light themes like `catppuccin-latte`.
+
+If the file is missing or can't be parsed, the app falls back to its built-in Tokyo Night + Catppuccin Mocha palette.
+
+To apply a new theme, switch it with `omarchy theme set <name>` and restart the app.
 
 ## Waybar Integration
 
@@ -93,7 +101,7 @@ src/
     sysfs.rs        Direct hwmon reads (temps, fans, battery)
   ui/
     mod.rs          Layout, header, tabs bar, footer, help overlay
-    theme.rs        Color palette (Tokyo Night + Catppuccin Mocha)
+    theme.rs        Color palette (omarchy theme or Tokyo Night + Catppuccin Mocha fallback)
     tabs/
       overview.rs   System dashboard
       performance.rs Profile & PPT controls
